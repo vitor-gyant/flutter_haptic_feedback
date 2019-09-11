@@ -19,12 +19,11 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
 
-  private FlutterHapticFeedbackPlugin(Registrar registrar){
-    this._vibrator = (Vibrator)registrar.context().getSystemService(Context.VIBRATOR_SERVICE);
-  }
-
-  private Vibrator _vibrator;
   static Activity activity;
+
+  private FlutterHapticFeedbackPlugin(Registrar registrar){
+
+  }
 
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_haptic_feedback");
@@ -38,58 +37,50 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
     View rootView = activity.getWindow().getDecorView().getRootView();
 
     if (call.method.equals("vibrate")) {
-      if(_vibrator.hasVibrator()){
-        int duration = call.argument("duration");
-        _vibrator.vibrate(duration);
-      }
+      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
       result.success(null);
     }
     else if(call.method.equals("canVibrate")){
-      result.success(_vibrator.hasVibrator());
+      result.success(true);
     } //Feedback
     else if(call.method.equals("impact")){
-      if(_vibrator.hasVibrator()){
-        _vibrator.vibrate(HapticFeedbackConstants.VIRTUAL_KEY);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+      result.success(null);
+    }
+    else if(call.method.equals("selection")){
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
       result.success(null);
     }
     else if(call.method.equals("success")){
-      if(_vibrator.hasVibrator()){
-        rootView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
       result.success(null);
     }
     else if(call.method.equals("warning")){
-      if(_vibrator.hasVibrator()){
-        rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
       result.success(null);
     }
     else if(call.method.equals("error")){
-      if(_vibrator.hasVibrator()){
-          int duration = 500;
-          _vibrator.vibrate(duration);
-      }
+      //The HapticFeedbackConstants is the same of impact but is handled a different way on dart
+      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
       result.success(null);
     }
     else if(call.method.equals("heavy")){
-      if(_vibrator.hasVibrator()){
-        rootView.performHapticFeedback(HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
       result.success(null);
     }
     else if(call.method.equals("medium")){
-      if(_vibrator.hasVibrator()){
-          int duration = 40;
-          _vibrator.vibrate(duration);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
       result.success(null);
     }
     else if(call.method.equals("light")){
-      if(_vibrator.hasVibrator()){
-          int duration = 10;
-          _vibrator.vibrate(duration);
-      }
+
+      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
       result.success(null);
     }
     else {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
@@ -35,7 +36,11 @@ class FlutterHapticFeedback {
         _channel.invokeMethod('impact');
         break;
       case FeedbackType.error:
-        _channel.invokeMethod('error');
+        if (Platform.isIOS) {
+          _channel.invokeMethod('error');
+        } else {
+          FlutterHapticFeedback.androidVibrateError();
+        }
         break;
       case FeedbackType.success:
         _channel.invokeMethod('success');
@@ -69,6 +74,26 @@ class FlutterHapticFeedback {
       //Because the native vibration is not awaited, we need to wait for
       //the vibration to end before launching another one
       await new Future.delayed(_DEFAULT_VIBRATION_DURATION);
+      await new Future.delayed(d);
+    }
+    vibrate();
+  }
+
+  //This method is need because android doesnt't have
+  //an HapticFeedbackConstants strong enough to resemble an error
+  static Future androidVibrateError() async {
+    final Iterable<Duration> pausesError = [
+      const Duration(milliseconds: 5),
+      const Duration(milliseconds: 5),
+      const Duration(milliseconds: 50),
+      const Duration(milliseconds: 5),
+    ];
+
+    for (Duration d in pausesError) {
+      _channel.invokeMethod('error');
+      //Because the native vibration is not awaited, we need to wait for
+      //the vibration to end before launching another one
+      await new Future.delayed(Duration(milliseconds: 5));
       await new Future.delayed(d);
     }
     vibrate();
