@@ -50,12 +50,12 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
     }
     else if(call.method.equals("selection")){
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
       result.success(null);
     }
     else if(call.method.equals("success")){
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
+      rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
       result.success(null);
     }
     else if(call.method.equals("warning")){
