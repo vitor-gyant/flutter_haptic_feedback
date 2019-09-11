@@ -1,9 +1,12 @@
 package com.gyant.flutter.plugins.flutter_haptic_feedback;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
+import android.view.View;
 
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -21,14 +24,19 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
   }
 
   private Vibrator _vibrator;
+  static Activity activity;
 
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_haptic_feedback");
+    activity = registrar.activity();
     channel.setMethodCallHandler(new FlutterHapticFeedbackPlugin(registrar));
   }
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
+
+    View rootView = activity.getWindow().getDecorView().getRootView();
+
     if (call.method.equals("vibrate")) {
       if(_vibrator.hasVibrator()){
         int duration = call.argument("duration");
@@ -45,23 +53,15 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
       }
       result.success(null);
     }
-    else if(call.method.equals("selection")){
-      if(_vibrator.hasVibrator()){
-        _vibrator.vibrate(HapticFeedbackConstants.KEYBOARD_TAP);
-      }
-      result.success(null);
-    }
     else if(call.method.equals("success")){
       if(_vibrator.hasVibrator()){
-          int duration = 50;
-          _vibrator.vibrate(duration);
+        rootView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
       }
       result.success(null);
     }
     else if(call.method.equals("warning")){
       if(_vibrator.hasVibrator()){
-          int duration = 250;
-          _vibrator.vibrate(duration);
+        rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
       }
       result.success(null);
     }
@@ -74,8 +74,7 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler {
     }
     else if(call.method.equals("heavy")){
       if(_vibrator.hasVibrator()){
-          int duration = 100;
-          _vibrator.vibrate(duration);
+        rootView.performHapticFeedback(HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
       }
       result.success(null);
     }
