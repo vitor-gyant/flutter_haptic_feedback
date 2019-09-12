@@ -1,10 +1,6 @@
 package com.gyant.flutter.plugins.flutter_haptic_feedback;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 
