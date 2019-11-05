@@ -1,5 +1,6 @@
 package com.gyant.flutter.plugins.flutter_haptic_feedback;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -51,65 +52,54 @@ public class FlutterHapticFeedbackPlugin implements MethodCallHandler, FlutterPl
       this.activity = null;
   }
 
+  @SuppressLint("NewApi")
   @Override
   public void onMethodCall(MethodCall call, Result result) {
 
-      // Ignore any invocation if not attached to an activity.
-      if (activity == null) {
-          return;
-      }
+    // Ignore any invocation if not attached to an activity.
+    if (activity == null) {
+        return;
+    }
 
     View rootView = activity.getWindow().getDecorView().getRootView();
 
-    if (call.method.equals("vibrate")) {
-      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-      result.success(null);
-    }
-    else if(call.method.equals("canVibrate")){
-      result.success(true);
-    } //Feedback
-    else if(call.method.equals("impact")){
+    switch (call.method) {
+      case "vibrate":
+        rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        result.success(null);
+        break;
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-      result.success(null);
-    }
-    else if(call.method.equals("selection")){
+      case "canVibrate":
+        result.success(true);
+        break;
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
-      result.success(null);
-    }
-    else if(call.method.equals("success")){
+      case "selection":
+      case "light":
+        rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        result.success(null);
+        break;
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-      result.success(null);
-    }
-    else if(call.method.equals("warning")){
+      case "success":
+      case "medium":
+        rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        result.success(null);
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-      result.success(null);
-    }
-    else if(call.method.equals("error")){
-      //The HapticFeedbackConstants is the same of impact but is handled a different way on dart
-      rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-      result.success(null);
-    }
-    else if(call.method.equals("heavy")){
+      case "impact":
+      case "warning":
+      case "error":
+        //The HapticFeedbackConstants is the same of impact but is handled a different way on dart
+        rootView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        result.success(null);
+        break;
+      case "heavy":
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
-      result.success(null);
-    }
-    else if(call.method.equals("medium")){
+        rootView.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
+        result.success(null);
+        break;
 
-      rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-      result.success(null);
-    }
-    else if(call.method.equals("light")){
-
-      rootView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
-      result.success(null);
-    }
-    else {
-      result.notImplemented();
+      default:
+        result.notImplemented();
+        break;
     }
   }
 
